@@ -41,11 +41,36 @@ def files_process(train_files):
     return counts
 
 
+def mean(counts):
+    mean = np.mean(counts, axis=2).astype('int')
+
+    output_file = "result/result_mean.csv"
+    fw = open(output_file, 'w')
+    fw.write('stationID,startTime,endTime,inNums,outNums')
+    fw.write('\n')
+
+    fr = open(os.path.join(BASE_PATH, 'dataset/Metro_testA/testA_submit_2019-01-29.csv'))
+    fr.readline()
+    for line in fr:
+        stationID, startTime, endTime = line.strip().split(',')
+        stationID = int(stationID)
+        t = time.strptime(startTime, "%Y-%m-%d %H:%M:%S")
+        timeslice = t.tm_hour * 6 + t.tm_min // 10
+        write_line = "%s,%s,%s\n" % (line.strip(), mean[stationID][0][timeslice], mean[stationID][1][timeslice])
+        fw.write(write_line)
+    fw.close()
+    fr.close()
+
+
+
 if __name__ == "__main__":
     train_files = get_files('dataset/Metro_train')
     counts = files_process(train_files)
 
     # 整理出key的时间序列
     station_in = counts[0][0].revel()
+
+    # 直接均值输出
+    mean(counts)
 
 
