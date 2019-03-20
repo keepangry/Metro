@@ -83,7 +83,7 @@ def output(predict, output_file):
 
 
 def mae(predict_counts, valid_counts):
-    return abs(np.mean(predict_counts-valid_counts))
+    return np.mean(np.abs(predict_counts-valid_counts))
 
 
 if __name__ == "__main__":
